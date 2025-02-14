@@ -1,43 +1,21 @@
-'use client';
+import ModalBackdrop from "@/components/modal-backdrop";
+import { getNewsItem } from "@/lib/news";
 
-import { DUMMY_NEWS } from "@/dummy-news";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
-
-export default function InterceptedImagePage({ params }) {
-    const router = useRouter();
-    const dialogRef = useRef(null);
+export default async function InterceptedImagePage({ params }) {
 
     const newsItemSlug = params.slug;
-    const newsItem = DUMMY_NEWS.find(newsItem => newsItem.slug === newsItemSlug);
-
-    useEffect(() => {
-        if (!newsItem) {
-            router.replace('/'); // Redirect instead of breaking with `notFound()`
-        } else if (dialogRef.current) {
-            dialogRef.current.showModal(); // Open modal when component mounts
-        }
-    }, [newsItem, router]);
+    const newsItem = await getNewsItem(newsItemSlug);
 
     if (!newsItem) {
         return null; // Prevents rendering if newsItem is not found
     }
 
-    const closeModal = () => {
-        if (window.history.length > 1) {
-            router.back(); // Go back only if history exists
-        } else {
-            router.replace('/'); // If no history, redirect to home
-        }
-    };
-
-    return (
-        <div className="modal-backdrop" onClick={closeModal}>
-            <dialog className="modal" ref={dialogRef}>
-                <div className="fullscreen-image">
-                    <img src={`/images/news/${newsItem.image}`} alt={newsItem.title} />
-                </div>
-            </dialog>
-        </div>
+    return (<>
+        <ModalBackdrop>
+            <div className="fullscreen-image">
+                <img src={`/images/news/${newsItem.image}`} alt={newsItem.title} />
+            </div>
+        </ModalBackdrop>
+    </>
     );
 }
