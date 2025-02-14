@@ -11,7 +11,7 @@ export default function NewsPage() {
 
     useEffect(() => {
         async function fetchNews() {
-            const response = await fetch('http://localhost:8080');
+            const response = await fetch('http://localhost:8080/news');
 
             if(!response.ok) {
                 setError('Failed to fetch news.');
@@ -20,7 +20,7 @@ export default function NewsPage() {
 
             const news = await response.json();
             setIsLoading(false);
-            setNews();
+            setNews(news);
         }
         fetchNews();
     }, []);
